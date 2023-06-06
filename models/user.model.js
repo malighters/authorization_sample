@@ -23,6 +23,10 @@ const userSchema = new mongoose.Schema({
   isAdmin: {
     type: Boolean,
     default: false
+  },
+  boss: {
+    type: mongoose.Types.ObjectId,
+    ref: 'User',
   }
 });
 
@@ -53,4 +57,4 @@ userSchema.set('toJSON', {
 
 const User = mongoose.model('User', userSchema);
 
-export default User;
+module.exports = User;
