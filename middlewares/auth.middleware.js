@@ -1,9 +1,11 @@
 const jwt = require('jsonwebtoken');
+const badRequestError = require('../errors/badRequestError.error');
+const unauthorizedError = require('../errors/unauthorizedError.error');
 
 const authMiddleware = async (req, res, next) => {
   const bearerToken = req.headers.authorization;
   if(!bearerToken || !bearerToken.startsWith('Bearer')) {
-    throw new Error('Authentication error');
+    throw new badRequestError('Authentication error');
   }
 
   const token = bearerToken.replace('Bearer ', '');
@@ -13,7 +15,7 @@ const authMiddleware = async (req, res, next) => {
     req.app.locals.user = decodedToken;
   }
   catch(err) {
-    throw new Error('Authentication error');
+    throw new unauthorizedError('Authentication error');
   }
 
   next();

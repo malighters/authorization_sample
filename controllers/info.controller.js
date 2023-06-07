@@ -1,4 +1,5 @@
 const User = require('../models/user.model');
+const badRequestError = require('../errors/badRequestError.error');
 const iterateThroughUsers = require('../utils/iterateUsers.utillity');
 
 const getRegulars = async (req, res) => {
@@ -27,13 +28,13 @@ const changeBoss = async (req, res) => {
   const user = await User.findById(regularUserId);
 
   if(user.boss.toString() !== userId) {
-    throw new Error(`You are not a boss of user ${regularUserId}`);
+    throw new badRequestError(`You are not a boss of user ${regularUserId}`);
   }
 
   const newBoss = await User.findById(newBossId);
 
   if(!newBoss) {
-    throw new Error(`There is no user with id ${newBossId} so you can't change boss for user ${regularUserId}`);
+    throw new badRequestError(`There is no user with id ${newBossId} so you can't change boss for user ${regularUserId}`);
   }
 
   await User.findOneAndUpdate({ _id: regularUserId}, { boss: newBoss });
