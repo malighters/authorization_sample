@@ -6,6 +6,7 @@ const authRouter = require('./routes/auth.router');
 const infoRouter = require('./routes/info.router');
 const errorHandlerMiddleware = require('./middlewares/errorHander.middleware');
 const User = require('./models/user.model');
+const bcrypt = require('bcrypt');
 
 dotenv.config();
 
@@ -22,9 +23,11 @@ mongoose.connect(process.env.MONGODB_URI).then(async () => {
   app.listen(process.env.PORT, async () => {
     console.log(`Server has been started on http://localhost:${process.env.PORT}`);
 
-    const user = await User.findOne({email: "admin@admin.com"});
+    const user = await User.findOne({ email: "admin@admin.com" });
+
     if(!user) {
-      await User.create({email: "admin@admin.com", password: "password", name: "admin", isAdmin: true});
+      const passwordHash = await bcrypt.hash("password", 10);
+      await User.create({ email: "admin@admin.com", password: passwordHash, name: "admin", isAdmin: true });
     }
   })
 });

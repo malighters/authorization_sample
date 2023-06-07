@@ -1,4 +1,5 @@
 const User = require('../models/user.model');
+const bcrypt = require('bcrypt');
 
 const register = async (req, res, next) => {
   const { email, password, name, bossId } = req.body;
@@ -13,13 +14,18 @@ const register = async (req, res, next) => {
 
   const boss = await User.findById(bossId);
   if(!boss) {
-    console.log(boss);
     throw new Error('Boss does not exist in system'); 
   }
 
-  const user  = await User.create({ email, password, name, boss });
+  const passwordHash = await bcrypt.hash(password, 10);
+
+  const user  = await User.create({ email, password: passwordHash, name, boss });
+
+  boss.subs.push(user);
+  await boss.save();
+
   const token = await user.createJWT();
-  res.status(201).json({user, token});
+  res.status(201).json({ token });
 }
 
 const auth = async (req, res) => {

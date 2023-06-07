@@ -27,14 +27,14 @@ const userSchema = new mongoose.Schema({
   boss: {
     type: mongoose.Types.ObjectId,
     ref: 'User',
-  }
+  },
+  subs: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: 'User',
+    },
+  ],
 });
-
-userSchema.pre('save', async function () {
-  const user = this;
-  const salt = await bcrypt.genSalt(10);
-  user.password = await bcrypt.hash(user.password, salt);
-})
 
 userSchema.methods.createJWT = function () {
   return jwt.sign({userId: this._id}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_LIFETIME});
@@ -51,6 +51,7 @@ userSchema.set('toJSON', {
     delete returnedObject._id
     delete returnedObject.__v
     delete returnedObject.password
+    delete returnedObject.subs
   }
 })
 

@@ -7,6 +7,6 @@ const authRouter = express.Router();
 authRouter.post('/register', register);
 
 // Second endpoint: Authenticate as a user
-authRouter.post('/login', atuh);
+authRouter.post('/login', auth);
 
 module.exports = authRouter;
